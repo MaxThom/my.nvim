@@ -6,6 +6,27 @@
 --    as they will be available in your neovim runtime.
 require('lazy').setup({
   -- NOTE: First, some plugins that don't require any configuration
+  spec = {
+    { 'LazyVim/LazyVim', import = 'lazyvim.plugins' },
+    { import = 'lazyvim.plugins.extras.coding.copilot' },
+    { import = 'lazyvim.plugins.extras.dap.core' },
+    { import = 'lazyvim.plugins.extras.dap.nlua' },
+    { import = 'lazyvim.plugins.extras.editor.leap' },
+    { import = 'lazyvim.plugins.extras.formatting.black' },
+    { import = 'lazyvim.plugins.extras.lsp.none-ls' },
+    { import = 'lazyvim.plugins.extras.test.core' },
+    { import = 'lazyvim.plugins.extras.lang.docker' },
+    { import = 'lazyvim.plugins.extras.lang.go' },
+    { import = 'lazyvim.plugins.extras.lang.json' },
+    { import = 'lazyvim.plugins.extras.lang.markdown' },
+    { import = 'lazyvim.plugins.extras.lang.python' },
+    { import = 'lazyvim.plugins.extras.lang.rust' },
+    { import = 'lazyvim.plugins.extras.lang.tailwind' },
+    { import = 'lazyvim.plugins.extras.lang.terraform' },
+    { import = 'lazyvim.plugins.extras.lang.typescript' },
+    { import = 'lazyvim.plugins.extras.lang.yaml' },
+    --{ import = "plugins" },
+  },
 
   -- Git related plugins
   'tpope/vim-fugitive',
@@ -47,7 +68,70 @@ require('lazy').setup({
 
       -- Adds a number of user-friendly snippets
       'rafamadriz/friendly-snippets',
+
+      'hrsh7th/cmp-buffer',
     },
+    opts = function()
+      vim.api.nvim_set_hl(0, 'CmpGhostText', { link = 'Comment', default = true })
+      local cmp = require 'cmp'
+      local defaults = require 'cmp.config.default'()
+      return {
+        completion = {
+          completeopt = 'menu,menuone,noinsert',
+        },
+        snippet = {
+          expand = function(args)
+            require('luasnip').lsp_expand(args.body)
+          end,
+        },
+        mapping = cmp.mapping.preset.insert {
+          ['<C-n>'] = cmp.mapping.select_next_item { behavior = cmp.SelectBehavior.Insert },
+          ['<C-p>'] = cmp.mapping.select_prev_item { behavior = cmp.SelectBehavior.Insert },
+          ['<C-b>'] = cmp.mapping.scroll_docs(-4),
+          ['<C-f>'] = cmp.mapping.scroll_docs(4),
+          ['<C-Space>'] = cmp.mapping.complete(),
+          ['<C-e>'] = cmp.mapping.abort(),
+          ['<CR>'] = cmp.mapping.confirm { select = true }, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+          ['<S-CR>'] = cmp.mapping.confirm {
+            behavior = cmp.ConfirmBehavior.Replace,
+            select = true,
+          }, -- Accept currently selected item. Set `select` to `false` to only confirm explicitly selected items.
+          ['<C-CR>'] = function(fallback)
+            cmp.abort()
+            fallback()
+          end,
+        },
+        sources = cmp.config.sources({
+          { name = 'nvim_lsp' },
+          { name = 'luasnip' },
+          { name = 'path' },
+        }, {
+          { name = 'buffer' },
+        }),
+        formatting = {
+          format = function(_, item)
+            local icons = require('lazyvim.config').icons.kinds
+            if icons[item.kind] then
+              item.kind = icons[item.kind] .. item.kind
+            end
+            return item
+          end,
+        },
+        experimental = {
+          ghost_text = {
+            hl_group = 'CmpGhostText',
+          },
+        },
+        sorting = defaults.sorting,
+      }
+    end,
+    ---@param opts cmp.ConfigSchema
+    config = function(_, opts)
+      for _, source in ipairs(opts.sources) do
+        source.group_index = source.group_index or 1
+      end
+      require('cmp').setup(opts)
+    end,
   },
 
   -- Useful plugin to show you pending keybinds.
