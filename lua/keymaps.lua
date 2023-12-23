@@ -16,14 +16,14 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next diagnos
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Open floating diagnostic message' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostics list' })
 
+-- leap
+require('leap').add_default_mappings()
+
 -- tmux navigator
 vim.api.nvim_set_keymap('n', '<C-l>', ':TmuxNavigateRight<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-j>', ':TmuxNavigateDown<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-h>', ':TmuxNavigateLeft<CR>', { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<C-k>', ':TmuxNavigateUp<CR>', { noremap = true, silent = true })
-
--- leap
-require('leap').add_default_mappings()
 
 -- telescope file explorer
 vim.api.nvim_set_keymap(
@@ -32,6 +32,9 @@ vim.api.nvim_set_keymap(
   ":Telescope file_browser<CR>",
   { noremap = true }
 )
+
+-- rename
+vim.keymap.set("n", "<leader>cr", ":IncRename ", { desc = 'Rename' })
 
 -- open file_browser with the path of the current buffer
 -- vim.api.nvim_set_keymap(
