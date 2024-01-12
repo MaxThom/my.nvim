@@ -4,12 +4,24 @@ return {
   {
     "LazyVim/LazyVim",
     opts = {
-      colorscheme = "tokyonight",
+      colorscheme = "onedark",
     },
   },
 
   -- add gruvbox
   { "ellisonleao/gruvbox.nvim" },
+
+  -- nord
+  { "shaunsingh/nord.nvim" },
+
+  -- onedark
+  {
+    "navarasu/onedark.nvim",
+    opts = {
+      style = 'deep',
+    },
+  },
+
 
   {
     "folke/tokyonight.nvim",
